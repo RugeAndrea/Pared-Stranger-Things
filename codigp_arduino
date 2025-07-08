@@ -1,0 +1,63 @@
+// Pines del sensor ultrasónico
+const int trigPin = 2;
+const int echoPin = 3;
+
+// Pines de los LEDs (HELP)
+const int ledH = 4;  // Rojo
+const int ledE = 5;  // Amarillo
+const int ledL = 6;  // Verde
+const int ledP = 7; // Azul 
+
+// Distancia de activación
+const int distanciaLimite = 50;
+
+void setup() {
+  // Sensor
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  // LEDs
+  pinMode(ledH, OUTPUT);
+  pinMode(ledE, OUTPUT);
+  pinMode(ledL, OUTPUT);
+  pinMode(ledP, OUTPUT);
+
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Generar pulso para medir distancia
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Medir eco
+  long duracion = pulseIn(echoPin, HIGH);
+  int distancia = duracion * 0.034 / 2;
+
+  Serial.print("Distancia: ");
+  Serial.print(distancia);
+  Serial.println(" cm");
+
+  if (distancia > 0 && distancia <= distanciaLimite) {
+    // Encender secuencialmente: R -> U -> N
+    digitalWrite(ledH, HIGH);
+    delay(300);
+    digitalWrite(ledE, HIGH);
+    delay(300);
+    digitalWrite(ledL, HIGH);
+    delay(300);
+    digitalWrite(ledP, HIGH);
+    delay(1000); // Mostrar RUN por 1 segundo
+
+    // Apagar todos
+    digitalWrite(ledH, LOW);
+    digitalWrite(ledE, LOW);
+    digitalWrite(ledL, LOW);
+    digitalWrite(ledP, LOW);
+  }
+
+  delay(500); // Esperar antes de volver a medir
+}
